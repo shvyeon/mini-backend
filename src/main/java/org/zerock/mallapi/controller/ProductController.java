@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.zerock.mallapi.dto.PageRequestDTO;
@@ -49,6 +50,8 @@ public class ProductController {
         return fileUtil.getFile(fileName);
     }
 
+    //  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/list")
     public PageResponseDTO<ProductDTO> list(PageRequestDTO pageRequestDTO){
         log.info("list.................  " + pageRequestDTO);
@@ -64,7 +67,9 @@ public class ProductController {
     @PutMapping("/{pno}")
     public Map<String, String> modify(@PathVariable(name = "pno") Long pno, ProductDTO productDTO){
         productDTO.setPno(pno);
-
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        System.out.println(productDTO);
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         ProductDTO oldProductDTO = productService.get(pno);
         // 기존 파일들
         List<String> oldFileNames = oldProductDTO.getUploadFileNames();
